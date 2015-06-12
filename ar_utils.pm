@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 package ar_utils; ## no critic(NamingConventions::Capitalization)
 
 use strict;
@@ -67,7 +68,7 @@ sub verify_bin_exists
 		}
 	}
 	if ($found == 0) {
-		_err("err: binary to check not defined.\n");
+		_err("err: $bin not found.\n");
 	}
 	return;
 }

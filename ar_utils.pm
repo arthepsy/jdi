@@ -69,6 +69,7 @@ sub verify_bin_exists
 	if ($found == 0) {
 		_err("err: binary to check not defined.\n");
 	}
+	return;
 }
 
 1;

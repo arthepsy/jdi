@@ -8,10 +8,9 @@ use English qw(-no_match_vars);
 use ar_utils qw(verify_bin_exists _log _log_pad _err);
 
 _log_pad(26);
-my $_debug = 0;
 
 ## no critic(InputOutput::ProhibitBacktickOperators)
-
+my $_debug = ((scalar @ARGV) > 0 && $ARGV[0] eq '-v' ? 1 : 0);
 my $_ttyempty = q{-};
 my $_ttyregex = q{-};
 my $_filter   = q{-};
@@ -114,12 +113,8 @@ sub usage
 
 sub main
 {
-	my $c = (scalar @ARGV);
-	my $p = 0;
-	if ($c == 2) {
-		$_debug = ($ARGV[0] eq '-v' ? 1 : 0);
-		$p = 1;
-	} elsif ($c != 1) {
+	my $p = (scalar @ARGV) - 1;
+	if ($p > 1) {
 		usage();
 	}
 	my $pid = int $ARGV[$p];

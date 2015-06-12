@@ -1,0 +1,13 @@
+severity = 1 
+
+[-CodeLayout::RequireTidyCode]
+
+[-RegularExpressions::RequireExtendedFormatting]
+[-RegularExpressions::RequireDotMatchAnything]
+[-RegularExpressions::RequireLineBoundaryMatching]
+
+[InputOutput::RequireCheckedSyscalls]
+functions = open say close
+
+[-ValuesAndExpressions::ProhibitMagicNumbers]
+

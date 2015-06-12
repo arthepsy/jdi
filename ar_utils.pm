@@ -7,8 +7,6 @@ use Exporter qw(import);
 our $VERSION   = 1.0;
 our @EXPORT_OK = qw(get_valid_path verify_bin_exists _log);
 
-my $LOG_PAD = 0;
-
 ## no critic(Subroutines::ProhibitUnusedPrivateSubroutines)
 
 sub _trim
@@ -17,24 +15,21 @@ sub _trim
 	return ! defined $s ? q{} : $s =~ s/^\s+|\s+$//r;
 }
 
-sub log_pad
-{
-	my ($s) = @_;
-	$s = ! defined $s ? q{} : $s =~ s/^\s+|\s+$//r;
-	$LOG_PAD = int $s;
-	return;
-}
-
+my $LOG_PAD = 0;
+sub _log_pad { $LOG_PAD = int _trim(shift); return; }
 sub _log
 { ## no critic(Subroutines::RequireArgUnpacking)
 	my $format = q{%} . ($LOG_PAD > 0 ? q{-} . int($LOG_PAD) : q{}) . "s %s \n";
-	return printf {*STDERR} $format, '[' . (caller 1)[3] . ']', @_;
+	my (undef, undef, undef, $sub) = caller 1;
+	if (! length($sub) > 0) {
+		($sub) = caller 0;
+	}
+	return printf {*STDERR} $format, '[' . $sub . ']', @_;
 }
 
 sub get_valid_path
 {
-	my ($s) = @_;
-	if (! defined $s) { $s = q{}; } else { $s =~ s/^\s+//; }
+	my $s = _trim(shift);
 	if (! length($s) > 0) {
 		return '/nonexistent';
 	}
@@ -44,7 +39,8 @@ sub get_valid_path
 	} else {
 		require File::Basename;
 		require File::Spec;
-		$path = File::Spec->join(File::Spec->rel2abs(dirname(__FILE__)), $s);
+		my $dir = File::Basename->dirname(__FILE__);
+		$path = File::Spec->join(File::Spec->rel2abs($dir), $s);
 	}
 	return $path;
 }

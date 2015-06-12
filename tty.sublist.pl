@@ -12,18 +12,18 @@ my $_debug = 0;
 
 ## no critic(InputOutput::ProhibitBacktickOperators)
 
-my $_ttyempty = qw{-};
-my $_ttyregex = qw{-};
-my $_filter   = qw{-};
+my $_ttyempty = q{-};
+my $_ttyregex = q{-};
+my $_filter   = q{-};
 
 sub init
 {
 	verify_bin_exists('lsof');
-	my $_ttyprefix = qw{-};
+	my $_ttyprefix = q{-};
 	my $_os = $OSNAME;
 	if ($_os eq 'openbsd') {
 			$_ttyprefix = 'ttyp';
-			$_filter = qw{};
+			$_filter = q{};
 	} elsif ($_os eq 'netbsd') {
 			$_ttyprefix = 'pts/';
 			$_filter = '-a /dev/pts';
@@ -41,7 +41,7 @@ sub init
 sub match_tty
 {
 	my ($line, $prefix) = @_;
-	my $regex = ($prefix == 1 ? qw{^} : q{}) . $_ttyregex;
+	my $regex = ($prefix == 1 ? q{^} : q{}) . $_ttyregex;
 	if ($line =~ /$regex/) {
 		my $tty_dev = $1;
 		my $tty_num = $2;

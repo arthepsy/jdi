@@ -4,13 +4,13 @@ use strict;
 use warnings;
 use version; our $VERSION = qv('1.0.0');
 
-use ar_utils qw(verify_bin_exists get_valid_path _log _log_pad);
+use ar_utils qw(get_valid_path verify_bin_exists _log _log_pad _err);
 
 _log_pad(30);
 
 ## no critic(InputOutput::ProhibitBacktickOperators)
 my $_debug = ((scalar @ARGV) > 0 && $ARGV[0] eq q{-v} ? 1 : 0);
-my $_list_sshd_script = './sshd.list.pl';
+my $_list_sshd_script = 'sshd.list.pl';
 
 sub get_sshd_forward_ports
 {
@@ -29,6 +29,18 @@ sub get_sshd_forward_ports
 		}
 	}
 	return @ports;
+}
+
+sub init
+{
+	my $script = get_valid_path($_list_sshd_script);
+	if (! -f $script) {
+		_err("err: $_list_sshd_script not found.\n");
+	}
+	if (! -x $script) {
+		_err("err: $_list_sshd_script not executable.\n");
+	}
+	return;
 }
 
 sub main
@@ -50,5 +62,6 @@ sub main
 	return;
 }
 
+init();
 main();
 

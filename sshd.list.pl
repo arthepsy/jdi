@@ -5,13 +5,13 @@ use warnings;
 use version; our $VERSION = qv('1.0.0');
 
 use English qw(-no_match_vars);
-use ar_utils qw(get_valid_path _log _log_pad _err);
+use ar_utils qw(get_valid_path verify_bin_exists _log _log_pad _err);
 
 _log_pad(26);
 
 ## no critic(InputOutput::ProhibitBacktickOperators)
 my $_debug = ((scalar @ARGV) > 0 && $ARGV[0] eq '-v' ? 1 : 0);
-my $_tty_sublist_script = './tty.sublist.pl';
+my $_tty_sublist_script = 'tty.sublist.pl';
 my $_notfound = -1;
 
 sub get_ppid
@@ -149,6 +149,18 @@ sub find_sshd
 	return;
 }
 
+sub init
+{
+	my $script = get_valid_path($_tty_sublist_script);
+	if (! -f $script) {
+		_err("err: $_tty_sublist_script not found.\n");
+	}
+	if (! -x $script) {
+		_err("err: $_tty_sublist_script not executable.\n");
+	}
+	return;
+}
+
 sub main
 {
 	my $pid = $PID;
@@ -156,5 +168,5 @@ sub main
 	return;
 }
 
+init();
 main();
-

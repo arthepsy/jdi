@@ -2,10 +2,10 @@ package ar_utils; ## no critic(NamingConventions::Capitalization)
 
 use strict;
 use warnings;
+use version; our $VERSION = qv('1.0.0');
 
 use Exporter qw(import);
-our $VERSION   = 1.0;
-our @EXPORT_OK = qw(get_valid_path verify_bin_exists _log);
+our @EXPORT_OK = qw(get_valid_path verify_bin_exists _log _log_pad _err);
 
 ## no critic(Subroutines::ProhibitUnusedPrivateSubroutines)
 
@@ -13,6 +13,14 @@ sub _trim
 {
 	my $s = shift;
 	return ! defined $s ? q{} : $s =~ s/^\s+|\s+$//r;
+}
+
+sub _err
+{
+	my ($msg, $code) = @_;
+	$code = ! defined $code ? 1 : int $code;
+	print {*STDERR} $msg;
+	exit $code;
 }
 
 my $LOG_PAD = 0;
@@ -49,8 +57,7 @@ sub verify_bin_exists
 {
 	my $bin = _trim(shift);
 	if (! length($bin) > 0) {
-		print {*STDERR} "err: binary to check not defined.\n";
-		exit 1;
+		_err("err: binary to check not defined.\n");
 	}
 	my $found = 0;
 	foreach my $dir (split /:/, $ENV{PATH}) {
@@ -60,8 +67,7 @@ sub verify_bin_exists
 		}
 	}
 	if ($found == 0) {
-		print {*STDERR} "err: $bin not found.\n";
-		exit 1;
+		_err("err: binary to check not defined.\n");
 	}
 }
 

@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use version; our $VERSION = qv('1.0.0');
 
+use File::Basename;
+use lib dirname(__FILE__);
 use ar_utils qw(get_valid_path verify_bin_exists _log _log_pad _err);
 
 _log_pad(30);

@@ -5,6 +5,8 @@ use warnings;
 use version; our $VERSION = qv('1.0.0');
 
 use English qw(-no_match_vars);
+use File::Basename;
+use lib dirname(__FILE__);
 use ar_utils qw(verify_bin_exists _log _log_pad _err);
 
 _log_pad(26);

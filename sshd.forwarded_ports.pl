@@ -6,7 +6,7 @@ use version; our $VERSION = qv('1.0.0');
 
 use File::Basename;
 use lib dirname(__FILE__);
-use ar_utils qw(get_valid_path verify_bin_exists _log _log_pad _err);
+use ar_utils qw(get_valid_path check_bin_exists verify_bin_exists _log _log_pad _err);
 
 _log_pad(30);
 
@@ -18,8 +18,13 @@ sub get_sshd_forward_ports
 {
 	my ($pid) = @_;
 	$pid = int $pid;
+	if (! $pid > 0) {
+		_err("err: pid not defined.\n");
+	}
 	my @ports;
-	if ($pid > 0) {
+	my $found = check_bin_exists('lsof');
+	if ($found) {
+		verify_bin_exists('lsof');
 		my $c = "lsof -w -Fn -nP -i 4 -a -p $pid";
 		if ($_debug) { _log("- running command: $c") };
 		my @lines = split /\n/, `$c`;
@@ -29,8 +34,25 @@ sub get_sshd_forward_ports
 				push @ports, $port;
 			}
 		}
+		return @ports;
 	}
-	return @ports;
+	my $os = $^O;
+	if ($os eq 'freebsd') {
+		verify_bin_exists('sockstat');
+		my $c = "sockstat -l";
+		if ($_debug) { _log("- running command: $c") };
+		my @lines = split /\n/, `$c`;
+		foreach my $line (@lines) {
+			my (undef, undef, $spid, undef, $proto, $laddr, undef) = split(/\s{1,}/, $line);
+			next if ($spid ne $pid);
+			if ($proto eq 'tcp4' or $proto eq 'tcp6') {
+				my ($host, $port) = split(/:([^:]+)$/, $laddr);
+				push @ports, $port;
+			}
+		}
+		return @ports;
+	}
+	_err("err: no helper tools found (lsof/fstat).\n");
 }
 
 sub init
@@ -47,7 +69,6 @@ sub init
 
 sub main
 {
-	verify_bin_exists('lsof');
 	my $c = get_valid_path($_list_sshd_script);
 	if ($_debug) { _log("- running command: $c") };
 	my @lines = split /\n/, `env PERL_BADLANG=0 $c`;

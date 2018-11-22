@@ -6,7 +6,7 @@ use warnings;
 use version; our $VERSION = qv('1.0.0');
 
 use Exporter qw(import);
-our @EXPORT_OK = qw(get_valid_path verify_bin_exists _log _log_pad _err);
+our @EXPORT_OK = qw(get_valid_path check_bin_exists verify_bin_exists _log _log_pad _err);
 
 ## no critic(Subroutines::ProhibitUnusedPrivateSubroutines)
 

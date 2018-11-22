@@ -46,10 +46,10 @@ sub get_valid_path
 	if ($s =~ /^\//) {
 		$path = $s;
 	} else {
-		require File::Basename;
 		require File::Spec;
-		my $dir = File::Basename->dirname(__FILE__);
-		$path = File::Spec->join(File::Spec->rel2abs($dir), $s);
+		my ($v, $d) = File::Spec->splitpath(File::Spec->rel2abs(__FILE__));
+		my $dir = "$v.$d";
+		$path = File::Spec->join($d, $s);
 	}
 	return $path;
 }

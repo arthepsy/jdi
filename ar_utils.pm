@@ -54,7 +54,7 @@ sub get_valid_path
 	return $path;
 }
 
-sub verify_bin_exists
+sub check_bin_exists
 {
 	my $bin = _trim(shift);
 	if (! length($bin) > 0) {
@@ -67,6 +67,13 @@ sub verify_bin_exists
 			last;
 		}
 	}
+	return $found;
+}
+
+sub verify_bin_exists
+{
+	my $bin = _trim(shift);
+	my $found = check_bin_exists($bin);
 	if ($found == 0) {
 		_err("err: $bin not found.\n");
 	}
